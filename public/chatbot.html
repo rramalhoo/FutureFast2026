@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#8f49b8">
+  <title>Genvity | Chatbot</title>
+
+  <link rel="stylesheet" href="css/style.css">
+
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/dompurify@3.2.6/dist/purify.min.js"></script>
+</head>
+
+<body>
+
+  <header class="header">
+
+    <div class="brand-panel">
+      <img class="brand" src="assets/logo.png" alt="Genvity">
+
+      <div class="brand-copy">
+        <strong>Genvity</strong>
+        <span>Seu cuidado, mais organizado.</span>
+      </div>
+    </div>
+
+    <nav class="nav">
+
+      <a href="index.html" class="nav-item">
+        <span class="nav-icon">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M3.5 10.7 12 3.8l8.5 6.9v9.1a1.7 1.7 0 0 1-1.7 1.7H5.2a1.7 1.7 0 0 1-1.7-1.7v-9.1Z"/>
+            <path d="M9 21.5v-6.2h6v6.2"/>
+          </svg>
+        </span>
+        <span>Início</span>
+      </a>
+
+      <a href="chatbot.html" class="nav-item active">
+        <span class="nav-icon">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M20.5 11.3a7.9 7.9 0 0 1-1 3.8c-1.5 2.5-4.3 4.1-7.5 4.1-1.3 0-2.5-.3-3.6-.8L4 20l1.2-3.4a7.8 7.8 0 0 1-1.2-4.3c0-4.5 3.6-8.1 8-8.1s8 3.6 8.5 7.1Z"/>
+            <path d="M8.3 11.7h.1M12 11.7h.1M15.7 11.7h.1"/>
+          </svg>
+        </span>
+        <span>Chatbot</span>
+      </a>
+
+      <a href="agenda.html" class="nav-item">
+        <span class="nav-icon">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <rect x="4" y="5.5" width="16" height="15" rx="2"/>
+            <path d="M8 3.5v4M16 3.5v4M4 9.5h16M8 13h2M13 13h2M8 17h2M13 17h2"/>
+          </svg>
+        </span>
+        <span>Agenda</span>
+      </a>
+
+      <a href="scanner.html" class="nav-item">
+        <span class="nav-icon">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M7 3.5H4.5A1.5 1.5 0 0 0 3 5v2.5M17 3.5h2.5A1.5 1.5 0 0 1 21 5v2.5M7 20.5H4.5A1.5 1.5 0 0 1 3 19v-2.5M17 20.5h2.5A1.5 1.5 0 0 0 21 19v-2.5"/>
+            <rect x="7" y="8" width="10" height="8" rx="1.5"/>
+            <path d="M9.5 12h5"/>
+          </svg>
+        </span>
+        <span>Scanner de Receita</span>
+      </a>
+
+    </nav>
+
+    <div class="header-tools">
+
+      <button
+        aria-label="Notificações"
+        class="tool-btn notification-btn"
+        title="Notificações"
+      >
+        <svg class="header-svg" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M18 9.8c0-3.4-2.2-5.8-6-5.8s-6 2.4-6 5.8c0 6-2 6.7-2 6.7h16s-2-.7-2-6.7Z"/>
+          <path d="M9.7 20h4.6"/>
+        </svg>
+
+        <span class="notification-dot" aria-hidden="true"></span>
+      </button>
+
+      <button
+        aria-label="Perfil"
+        class="tool-btn profile-btn"
+        title="Conta"
+      >
+        <svg class="header-svg" viewBox="0 0 24 24" aria-hidden="true">
+          <circle cx="12" cy="8" r="3.25"/>
+          <path d="M5.2 20c.75-3.15 3.05-5 6.8-5s6.05 1.85 6.8 5"/>
+        </svg>
+      </button>
+
+    </div>
+
+  </header>
+
+  <main class="page">
+
+    <section class="chat-wrap">
+
+      <div class="chat-card">
+
+        <div class="chat-header">
+
+          <div class="chat-header-icon">
+            G
+          </div>
+
+          <div>
+            <strong>Genvity</strong>
+            <span>Assistente sobre medicamentos</span>
+          </div>
+
+          <span class="chat-status">
+            <i></i>
+            Online
+          </span>
+
+        </div>
+
+        <div class="chat-messages" id="chatMessages">
+
+          <div class="message bot">
+
+            <div class="avatar">
+              G
+            </div>
+
+            <div class="bubble">
+
+              <p>
+                Olá! Eu sou o Genvity.
+              </p>
+
+              <p>
+                Posso ajudar com dúvidas gerais sobre:
+              </p>
+
+              <ul>
+                <li>Medicamentos</li>
+                <li>Efeitos adversos</li>
+                <li>Cuidados</li>
+                <li>Interações medicamentosas</li>
+              </ul>
+
+              <p>
+                Qual é a sua dúvida?
+              </p>
+
+            </div>
+
+          </div>
+
+        </div>
+
+        <form class="chat-form" id="chatForm">
+
+          <input
+            id="chatInput"
+            type="text"
+            autocomplete="off"
+            placeholder="Digite sua dúvida sobre um medicamento..."
+            aria-label="Digite sua dúvida"
+          >
+
+          <button
+            id="chatSend"
+            type="submit"
+            aria-label="Enviar mensagem"
+          >
+            ➤
+          </button>
+
+        </form>
+
+      </div>
+
+    </section>
+
+  </main>
+
+  <script src="js/chatbot.js"></script>
+  <script src="js/profile.js"></script>
+
+</body>
+</html>

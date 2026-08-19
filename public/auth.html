@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#8f49b8"><title>Genvity | Conta</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body class="auth-body">
+<main class="auth-page">
+<section class="auth-brand">
+<img src="assets/logo.png" alt="Genvity">
+<span>SEU CUIDADO, MAIS ORGANIZADO</span>
+<h1>Seu Genvity,<br><strong>do seu jeito.</strong></h1>
+<p>Crie sua conta para manter sua rotina, agenda e informações organizadas em um só lugar.</p>
+</section>
+<section class="auth-card">
+<div class="auth-tabs"><button class="auth-tab active" data-mode="register">Criar conta</button><button class="auth-tab" data-mode="login">Entrar</button></div>
+<div class="auth-heading"><span class="eyebrow" id="authEyebrow">COMECE AGORA</span><h2 id="authTitle">Crie sua conta</h2><p id="authSubtitle">É rápido e você poderá acessar seu Genvity de qualquer dispositivo conectado ao servidor.</p></div>
+<form id="authForm">
+<label id="nameField">Nome completo<input id="name" name="name" type="text" placeholder="Ex.: Maria Silva" autocomplete="name"></label>
+<label>E-mail<input id="email" name="email" type="email" placeholder="voce@email.com" autocomplete="email" required></label>
+<label>Senha<div class="password-wrap"><input id="password" name="password" type="password" placeholder="Mínimo de 8 caracteres" minlength="8" autocomplete="new-password" required><button type="button" id="togglePassword">Mostrar</button></div></label>
+<button class="auth-submit" type="submit" id="submitBtn">Criar minha conta</button>
+<div class="auth-message" id="authMessage" role="alert"></div>
+</form>
+<p class="auth-footnote">Sua senha é armazenada como hash no servidor, não em texto puro.</p>
+<a class="back-home" href="index.html">← Voltar para o início</a>
+</section>
+</main>
+<script src="js/auth.js"></script>
+</body>
+</html>
