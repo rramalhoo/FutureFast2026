@@ -8,7 +8,7 @@ import { createConsultationAction } from "@/server/actions/doctor";
 import { Field } from "@/components/ui/field";
 import { Input, NativeSelect, Textarea } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
-import { FormStatus, SubmitButton, fieldError } from "@/components/shared/form";
+import { ActionForm, FormStatus, SubmitButton, fieldError } from "@/components/shared/form";
 import type { ActionResult } from "@/lib/action-result";
 import { fmt } from "@/lib/format";
 
@@ -35,7 +35,7 @@ export function ConsultationForm({ patients, appointments, defaultPatient }: { p
   const patientAppts = appointments.filter((a) => a.patientId === patientId);
 
   return (
-    <form action={action} className="space-y-5" noValidate>
+    <ActionForm action={action} className="space-y-5" noValidate>
       <FormStatus state={state.ok ? undefined : state} />
       <div className="grid gap-4 sm:grid-cols-2">
         <Field label="Paciente" htmlFor="patientId" required error={fieldError(state, "patientId")}>
@@ -81,6 +81,6 @@ export function ConsultationForm({ patients, appointments, defaultPatient }: { p
       <div className="flex justify-end">
         <SubmitButton size="lg" pendingLabel="Salvando…">Registrar consulta</SubmitButton>
       </div>
-    </form>
+    </ActionForm>
   );
 }

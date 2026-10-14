@@ -4,14 +4,14 @@ import { useActionState } from "react";
 import { completePatientOnboarding } from "@/server/actions/onboarding";
 import { Field } from "@/components/ui/field";
 import { Input, NativeSelect } from "@/components/ui/input";
-import { FormStatus, SubmitButton, fieldError } from "@/components/shared/form";
+import { ActionForm, FormStatus, SubmitButton, fieldError } from "@/components/shared/form";
 import { StateSelect } from "./state-select";
 import type { ActionResult } from "@/lib/action-result";
 
 export function PatientOnboardingForm({ defaultName }: { defaultName: string }) {
   const [state, action] = useActionState<ActionResult, FormData>(completePatientOnboarding, { ok: false, error: "" });
   return (
-    <form action={action} className="space-y-5" noValidate>
+    <ActionForm action={action} className="space-y-5" noValidate>
       <FormStatus state={state} />
       <Field label="Nome completo" htmlFor="fullName" required error={fieldError(state, "fullName")}>
         <Input name="fullName" defaultValue={defaultName} autoComplete="name" />
@@ -55,6 +55,6 @@ export function PatientOnboardingForm({ defaultName }: { defaultName: string }) 
           Concluir cadastro
         </SubmitButton>
       </div>
-    </form>
+    </ActionForm>
   );
 }

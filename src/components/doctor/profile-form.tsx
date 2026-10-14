@@ -4,7 +4,7 @@ import { useActionState } from "react";
 import { updateDoctorProfileAction } from "@/server/actions/doctor";
 import { Field } from "@/components/ui/field";
 import { Input, Textarea } from "@/components/ui/input";
-import { FormStatus, SubmitButton, fieldError } from "@/components/shared/form";
+import { ActionForm, FormStatus, SubmitButton, fieldError } from "@/components/shared/form";
 import { StateSelect } from "@/components/onboarding/state-select";
 import type { ActionResult } from "@/lib/action-result";
 import type { Tables } from "@/lib/supabase/types";
@@ -13,7 +13,7 @@ import { SPECIALTIES } from "@/lib/labels";
 export function DoctorProfileForm({ doctor }: { doctor: Tables<"doctors"> }) {
   const [state, action] = useActionState<ActionResult, FormData>(updateDoctorProfileAction, { ok: false, error: "" });
   return (
-    <form action={action} className="space-y-5" noValidate>
+    <ActionForm action={action} className="space-y-5" noValidate>
       <FormStatus state={state} />
       <div className="grid gap-4 sm:grid-cols-2">
         <Field label="Especialidade" htmlFor="specialty" error={fieldError(state, "specialty")}><Input name="specialty" list="specialties" defaultValue={doctor.specialty} /></Field>
@@ -47,6 +47,6 @@ export function DoctorProfileForm({ doctor }: { doctor: Tables<"doctors"> }) {
         </label>
       </div>
       <div className="flex justify-end"><SubmitButton pendingLabel="Salvando…">Salvar perfil</SubmitButton></div>
-    </form>
+    </ActionForm>
   );
 }

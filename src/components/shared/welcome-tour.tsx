@@ -3,6 +3,7 @@
 import * as React from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { Dialog as D } from "radix-ui";
+import { usePathname } from "next/navigation";
 import { ArrowRight, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { updatePreferencesAction } from "@/server/actions/account";
@@ -29,13 +30,24 @@ const STEPS: Record<UserRole, { title: string; text: string }[]> = {
   admin: [{ title: "Administração Genvity", text: "Verificações, usuários, assinaturas e auditoria em um só lugar." }],
 };
 
+const HOME: Record<UserRole, string> = { patient: "/paciente", doctor: "/medico", pharmacy: "/farmacia", admin: "/admin" };
+// Marca imediata no cliente: evita reabrir enquanto a preferência é salva.
+let dismissedThisSession = false;
+export function allowTourAgain() {
+  dismissedThisSession = false;
+}
+
 export function WelcomeTour({ role, show }: { role: UserRole; show: boolean }) {
-  const [open, setOpen] = React.useState(show);
+  const pathname = usePathname();
+  const [closed, setClosed] = React.useState(false);
+  const open = show && !closed && !dismissedThisSession && pathname === HOME[role];
+  const setOpen = (value: boolean) => setClosed(!value);
   const [step, setStep] = React.useState(0);
   const steps = STEPS[role];
   const current = steps[step]!;
 
   async function finish() {
+    dismissedThisSession = true;
     setOpen(false);
     await updatePreferencesAction({ tourDone: true });
   }

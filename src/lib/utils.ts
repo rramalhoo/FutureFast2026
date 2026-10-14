@@ -13,8 +13,10 @@ export function initials(name: string | null | undefined) {
   return (first + last).toUpperCase();
 }
 
+/** Primeiro nome, ignorando tratamentos como "Dr." e "Dra.". */
 export function firstName(name: string | null | undefined) {
-  return (name ?? "").trim().split(/\s+/)[0] ?? "";
+  const parts = (name ?? "").trim().split(/\s+/).filter((p) => !/^(dr|dra|sr|sra)\.?$/i.test(p));
+  return parts[0] ?? "";
 }
 
 /** Remove tudo que não for dígito. */

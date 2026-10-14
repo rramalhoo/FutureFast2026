@@ -6,7 +6,7 @@ import { Building2, HeartPulse, Stethoscope } from "lucide-react";
 import { signUpAction } from "@/server/actions/auth";
 import { Field } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import { FormStatus, PasswordInput, SubmitButton, fieldError } from "@/components/shared/form";
+import { ActionForm, FormStatus, PasswordInput, SubmitButton, fieldError } from "@/components/shared/form";
 import type { ActionResult } from "@/lib/action-result";
 import { cn } from "@/lib/utils";
 
@@ -21,7 +21,7 @@ export function SignUpForm({ defaultRole }: { defaultRole?: string }) {
   const [role, setRole] = useState<string>(roles.some((r) => r.value === defaultRole) ? defaultRole! : "patient");
 
   return (
-    <form action={action} className="space-y-5" noValidate>
+    <ActionForm action={action} className="space-y-5" noValidate>
       <FormStatus state={state} />
       <fieldset>
         <legend className="mb-2 text-sm font-medium text-foreground-strong">Tipo de conta</legend>
@@ -104,6 +104,6 @@ export function SignUpForm({ defaultRole }: { defaultRole?: string }) {
       <SubmitButton block size="lg" pendingLabel="Criando conta…">
         Criar conta
       </SubmitButton>
-    </form>
+    </ActionForm>
   );
 }

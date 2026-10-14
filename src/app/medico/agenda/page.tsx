@@ -4,7 +4,7 @@ import { CalendarPlus, ChevronLeft, ChevronRight } from "lucide-react";
 import { requireRole } from "@/lib/auth";
 import { getServerSupabase } from "@/lib/supabase/server";
 import { loadLinkedPatients } from "@/server/queries/doctor";
-import { nameOf } from "@/server/queries/patient";
+import { profileNames } from "@/server/queries/patient";
 import { PageHeader } from "@/components/ui/page-header";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -30,18 +30,19 @@ export default async function AgendaPage({ searchParams }: PageProps<"/medico/ag
   const [appts, requests, rules, blocks, history, patients] = await Promise.all([
     supabase
       .from("appointments")
-      .select("id, doctor_id, starts_at, ends_at, modality, status, reason, patient_id, patient:patients!inner(profile:profiles!inner(full_name))")
+      .select("id, doctor_id, starts_at, ends_at, modality, status, reason, patient_id")
       .eq("doctor_id", session.userId)
       .in("status", ["confirmed", "completed", "no_show"])
       .gte("starts_at", zonedDateTime(from, "00:00").toISOString())
       .lt("starts_at", zonedDateTime(to, "00:00").toISOString())
       .order("starts_at"),
-    supabase.from("appointments").select("id, starts_at, modality, status, reason, patient:patients!inner(profile:profiles!inner(full_name))").eq("doctor_id", session.userId).eq("status", "requested").order("starts_at"),
+    supabase.from("appointments").select("id, starts_at, modality, status, reason, patient_id").eq("doctor_id", session.userId).eq("status", "requested").order("starts_at"),
     supabase.from("doctor_availability").select("*").eq("doctor_id", session.userId),
     supabase.from("schedule_blocks").select("*").eq("doctor_id", session.userId).gte("ends_at", new Date().toISOString()).order("starts_at"),
-    supabase.from("appointments").select("id, starts_at, status, cancellation_reason, rescheduled_from, patient:patients!inner(profile:profiles!inner(full_name))").eq("doctor_id", session.userId).in("status", ["cancelled", "completed", "no_show"]).order("starts_at", { ascending: false }).limit(15),
+    supabase.from("appointments").select("id, starts_at, status, cancellation_reason, rescheduled_from, patient_id").eq("doctor_id", session.userId).in("status", ["cancelled", "completed", "no_show"]).order("starts_at", { ascending: false }).limit(15),
     loadLinkedPatients(session.userId),
   ]);
+  const names = await profileNames([...(appts.data ?? []), ...(requests.data ?? []), ...(history.data ?? [])].map((r) => r.patient_id));
   const today = todayISO();
 
   return (
@@ -60,7 +61,7 @@ export default async function AgendaPage({ searchParams }: PageProps<"/medico/ag
               {requests.data.map((a) => (
                 <li key={a.id} className="flex flex-col gap-3 rounded-2xl border border-border p-3 sm:flex-row sm:items-center">
                   <span className="min-w-0 flex-1">
-                    <span className="block font-medium text-foreground-strong">{nameOf(a.patient)}</span>
+                    <span className="block font-medium text-foreground-strong">{names.get(a.patient_id) ?? "Paciente"}</span>
                     <span className="text-caption text-muted-foreground">{fmt.weekday(a.starts_at)} às {fmt.time(a.starts_at)} · {MODALITY[a.modality]}{a.reason ? ` · “${a.reason}”` : ""}</span>
                   </span>
                   <AppointmentButtons id={a.id} status={a.status} startsAt={a.starts_at} />
@@ -94,7 +95,7 @@ export default async function AgendaPage({ searchParams }: PageProps<"/medico/ag
                     <li key={a.id} className={cn("rounded-xl px-2.5 py-2 text-sm", a.status === "confirmed" ? "bg-primary-soft text-primary-soft-foreground" : "bg-surface-sunken text-muted-foreground")}>
                       <Link href={`/medico/pacientes/${a.patient_id}`} className="block">
                         <span className="block font-semibold tabular">{fmt.time(a.starts_at)}</span>
-                        <span className="block truncate">{nameOf(a.patient)}</span>
+                        <span className="block truncate">{names.get(a.patient_id) ?? "Paciente"}</span>
                         <span className="block text-caption opacity-80">{MODALITY[a.modality]}{a.status !== "confirmed" ? ` · ${APPOINTMENT_STATUS[a.status].label}` : ""}</span>
                       </Link>
                       {a.status === "confirmed" ? (
@@ -129,7 +130,7 @@ export default async function AgendaPage({ searchParams }: PageProps<"/medico/ag
                 <ul className="space-y-2 text-sm">
                   {history.data.map((h) => (
                     <li key={h.id} className="flex items-center justify-between gap-2">
-                      <span className="min-w-0 truncate">{fmt.dateTime(h.starts_at)} · {nameOf(h.patient)}</span>
+                      <span className="min-w-0 truncate">{fmt.dateTime(h.starts_at)} · {names.get(h.patient_id) ?? "Paciente"}</span>
                       <Badge tone={APPOINTMENT_STATUS[h.status].tone}>{h.cancellation_reason === "Remarcada" ? "Remarcada" : APPOINTMENT_STATUS[h.status].label}</Badge>
                     </li>
                   ))}

@@ -30,7 +30,7 @@ export function Alert({
       <Icon className="mt-0.5 size-[1.15rem] shrink-0" aria-hidden />
       <div className="min-w-0 flex-1 space-y-0.5">
         {title ? <p className="font-semibold">{title}</p> : null}
-        {children ? <div className="leading-relaxed opacity-90">{children}</div> : null}
+        {children ? <div className="leading-relaxed">{children}</div> : null}
       </div>
       {action ? <div className="shrink-0 self-center">{action}</div> : null}
     </div>

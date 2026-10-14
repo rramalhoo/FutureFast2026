@@ -3,7 +3,7 @@ import Link from "next/link";
 import { ChevronRight, FileText, Plus } from "lucide-react";
 import { requireRole } from "@/lib/auth";
 import { getServerSupabase } from "@/lib/supabase/server";
-import { nameOf } from "@/server/queries/patient";
+import { profileNames } from "@/server/queries/patient";
 import { PageHeader } from "@/components/ui/page-header";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -30,12 +30,13 @@ export default async function DoctorPrescriptions({ searchParams }: PageProps<"/
   const supabase = await getServerSupabase();
   let query = supabase
     .from("prescriptions")
-    .select("id, status, kind, created_at, issued_at, valid_until, patient:patients!inner(profile:profiles!inner(full_name)), prescription_items(medication_name)")
+    .select("id, status, kind, created_at, issued_at, valid_until, patient_id, prescription_items(medication_name)")
     .eq("doctor_id", session.userId)
     .order("created_at", { ascending: false })
     .limit(100);
   if (filter.statuses) query = query.in("status", filter.statuses);
   const { data } = await query;
+  const names = await profileNames((data ?? []).map((r) => r.patient_id));
   const today = todayISO();
 
   return (
@@ -55,7 +56,7 @@ export default async function DoctorPrescriptions({ searchParams }: PageProps<"/
                 <li key={r.id}>
                   <Link href={`/medico/prescricoes/${r.id}`} className="flex items-center gap-3 px-5 py-4 hover:bg-surface-muted">
                     <span className="min-w-0 flex-1">
-                      <span className="block truncate font-medium text-foreground-strong">{nameOf(r.patient)}</span>
+                      <span className="block truncate font-medium text-foreground-strong">{names.get(r.patient_id) ?? "Paciente"}</span>
                       <span className="block truncate text-caption text-muted-foreground">
                         {(r.prescription_items as { medication_name: string }[]).map((i) => i.medication_name).join(", ") || "Sem itens"} · {PRESCRIPTION_KIND[r.kind].label} · {fmt.date(r.issued_at ?? r.created_at)}
                       </span>

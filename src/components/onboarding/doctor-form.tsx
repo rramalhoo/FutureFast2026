@@ -4,7 +4,7 @@ import { useActionState, useState } from "react";
 import { completeDoctorOnboarding } from "@/server/actions/onboarding";
 import { Field } from "@/components/ui/field";
 import { Input, Textarea } from "@/components/ui/input";
-import { FormStatus, SubmitButton, fieldError } from "@/components/shared/form";
+import { ActionForm, FormStatus, SubmitButton, fieldError } from "@/components/shared/form";
 import { FileUpload, type UploadedFile } from "@/components/shared/file-upload";
 import { Alert } from "@/components/ui/alert";
 import { StateSelect } from "./state-select";
@@ -15,7 +15,7 @@ export function DoctorOnboardingForm({ defaultName, userId }: { defaultName: str
   const [state, action] = useActionState<ActionResult, FormData>(completeDoctorOnboarding, { ok: false, error: "" });
   const [files, setFiles] = useState<UploadedFile[]>([]);
   return (
-    <form action={action} className="space-y-6" noValidate>
+    <ActionForm action={action} className="space-y-6" noValidate>
       <FormStatus state={state} />
       <Field label="Nome completo (como no CRM)" htmlFor="fullName" required error={fieldError(state, "fullName")}>
         <Input name="fullName" defaultValue={defaultName} autoComplete="name" />
@@ -86,6 +86,6 @@ export function DoctorOnboardingForm({ defaultName, userId }: { defaultName: str
           Enviar para verificação
         </SubmitButton>
       </div>
-    </form>
+    </ActionForm>
   );
 }

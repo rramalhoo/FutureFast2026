@@ -5,13 +5,13 @@ import { useActionState } from "react";
 import { signInAction } from "@/server/actions/auth";
 import { Field } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import { FormStatus, PasswordInput, SubmitButton, fieldError } from "@/components/shared/form";
+import { ActionForm, FormStatus, PasswordInput, SubmitButton, fieldError } from "@/components/shared/form";
 import type { ActionResult } from "@/lib/action-result";
 
 export function LoginForm({ next }: { next?: string }) {
   const [state, action] = useActionState<ActionResult, FormData>(signInAction, { ok: false, error: "" });
   return (
-    <form action={action} className="space-y-5" noValidate>
+    <ActionForm action={action} className="space-y-5" noValidate>
       <FormStatus state={state} />
       <input type="hidden" name="next" value={next ?? ""} />
       <Field label="E-mail" htmlFor="email" error={fieldError(state, "email")}>
@@ -28,6 +28,6 @@ export function LoginForm({ next }: { next?: string }) {
       <SubmitButton block size="lg" pendingLabel="Entrando…">
         Entrar
       </SubmitButton>
-    </form>
+    </ActionForm>
   );
 }

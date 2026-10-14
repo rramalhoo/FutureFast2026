@@ -15,7 +15,7 @@ import { Alert } from "@/components/ui/alert";
 import { Skeleton } from "@/components/ui/skeleton";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
-import { FormStatus, SubmitButton, fieldError } from "@/components/shared/form";
+import { ActionForm, FormStatus, SubmitButton, fieldError } from "@/components/shared/form";
 import { FavoriteButton } from "./favorite-button";
 import type { ActionResult } from "@/lib/action-result";
 import { STOCK_STATUS } from "@/lib/labels";
@@ -187,7 +187,7 @@ function RequestForm({ pharmacyId, prescriptions, preselected, query, onDone }: 
     return r;
   }, { ok: false, error: "" });
   return (
-    <form action={action} className="space-y-4" noValidate>
+    <ActionForm action={action} className="space-y-4" noValidate>
       <FormStatus state={state.ok ? undefined : state} />
       <input type="hidden" name="pharmacyId" value={pharmacyId} />
       <Field label="Receita (opcional)" htmlFor="prescriptionId">
@@ -213,6 +213,6 @@ function RequestForm({ pharmacyId, prescriptions, preselected, query, onDone }: 
         <Button type="button" variant="secondary" onClick={onDone}>Cancelar</Button>
         <SubmitButton pendingLabel="Enviando…">Enviar</SubmitButton>
       </div>
-    </form>
+    </ActionForm>
   );
 }

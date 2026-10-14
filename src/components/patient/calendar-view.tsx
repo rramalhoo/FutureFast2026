@@ -13,7 +13,7 @@ import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { Field } from "@/components/ui/field";
 import { Input, Textarea } from "@/components/ui/input";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
-import { FormStatus, SubmitButton, fieldError } from "@/components/shared/form";
+import { ActionForm, FormStatus, SubmitButton, fieldError } from "@/components/shared/form";
 import { createReminderAction, deleteReminderAction, toggleReminderAction } from "@/server/actions/patient";
 import { patientCancelAppointmentAction } from "@/server/actions/appointments";
 import { addDaysISO, type CalendarView as View, fmt, shiftCalendar, todayISO } from "@/lib/format";
@@ -265,7 +265,7 @@ function NewReminderDialog({ defaultDate }: { defaultDate: string }) {
         <Button size="sm"><Plus /> Lembrete</Button>
       </DialogTrigger>
       <DialogContent title="Novo lembrete" description="Exames, retornos, renovação de receita…">
-        <form action={action} className="space-y-4" noValidate>
+        <ActionForm action={action} className="space-y-4" noValidate>
           <FormStatus state={state.ok ? undefined : state} />
           <Field label="Título" htmlFor="title" required error={fieldError(state, "title")}>
             <Input name="title" placeholder="Ex.: Coletar exame de sangue" />
@@ -285,7 +285,7 @@ function NewReminderDialog({ defaultDate }: { defaultDate: string }) {
             <Button type="button" variant="secondary" onClick={() => setOpen(false)}>Cancelar</Button>
             <SubmitButton pendingLabel="Salvando…">Criar lembrete</SubmitButton>
           </div>
-        </form>
+        </ActionForm>
       </DialogContent>
     </Dialog>
   );

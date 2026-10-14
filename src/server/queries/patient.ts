@@ -27,3 +27,18 @@ export function nameOf(embed: unknown) {
   const e = embed as { full_name?: string; profile?: { full_name?: string } } | null;
   return e?.full_name ?? e?.profile?.full_name ?? "—";
 }
+
+/**
+ * Nomes de perfis visíveis ao usuário atual (RLS de `profiles`). Usado no lugar
+ * de joins por `patients`, que só é legível com vínculo ativo — assim
+ * solicitações pendentes e históricos continuam exibindo o nome.
+ */
+export async function profileNames(ids: (string | null | undefined)[]) {
+  const unique = [...new Set(ids.filter((v): v is string => Boolean(v)))];
+  const map = new Map<string, string>();
+  if (unique.length === 0) return map;
+  const supabase = await getServerSupabase();
+  const { data } = await supabase.from("profiles").select("id, full_name").in("id", unique);
+  for (const p of data ?? []) map.set(p.id, p.full_name);
+  return map;
+}

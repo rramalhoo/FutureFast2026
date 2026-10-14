@@ -202,8 +202,19 @@ create policy medications_admin_update on public.medications for update to authe
 -- ---------------------------------------------------------------------------
 -- prescriptions / items
 -- ---------------------------------------------------------------------------
+-- Avalia a própria linha (e não uma função sobre a tabela) para que
+-- INSERT ... RETURNING funcione no mesmo comando.
 create policy prescriptions_select on public.prescriptions for select to authenticated
-  using (public.can_view_prescription(id));
+  using (
+    doctor_id = auth.uid()
+    or (patient_id = auth.uid() and status not in ('draft', 'pending_signature'))
+    or (status not in ('draft', 'pending_signature') and public.has_history_access(auth.uid(), patient_id))
+    or exists (
+      select 1 from public.pharmacy_requests r
+      where r.prescription_id = prescriptions.id
+        and r.pharmacy_id = public.current_verified_pharmacy()
+    )
+  );
 
 create policy prescriptions_insert on public.prescriptions for insert to authenticated
   with check (

@@ -4,7 +4,7 @@ import { ClipboardList, Plus } from "lucide-react";
 import { requireRole } from "@/lib/auth";
 import { getServerSupabase } from "@/lib/supabase/server";
 import { isVerified, loadLinkedPatients } from "@/server/queries/doctor";
-import { nameOf } from "@/server/queries/patient";
+import { profileNames } from "@/server/queries/patient";
 import { PageHeader } from "@/components/ui/page-header";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -24,9 +24,10 @@ export default async function ConsultationsPage({ searchParams }: PageProps<"/me
   const [verified, patients, consults, appts] = await Promise.all([
     isVerified(session.userId),
     loadLinkedPatients(session.userId),
-    supabase.from("consultations").select("id, patient_id, occurred_at, reason, follow_up_date, patient:patients!inner(profile:profiles!inner(full_name))").eq("doctor_id", session.userId).order("occurred_at", { ascending: false }).limit(50),
+    supabase.from("consultations").select("id, patient_id, occurred_at, reason, follow_up_date").eq("doctor_id", session.userId).order("occurred_at", { ascending: false }).limit(50),
     supabase.from("appointments").select("id, patient_id, starts_at").eq("doctor_id", session.userId).eq("status", "confirmed").lte("starts_at", new Date(nowMs() + 3600 * 1000).toISOString()).order("starts_at", { ascending: false }).limit(30),
   ]);
+  const names = await profileNames((consults.data ?? []).map((c) => c.patient_id));
   const showForm = p.nova === "1";
 
   return (
@@ -60,7 +61,7 @@ export default async function ConsultationsPage({ searchParams }: PageProps<"/me
               <li key={c.id}>
                 <Link href={`/medico/pacientes/${c.patient_id}`} className="flex items-center gap-3 px-5 py-4 hover:bg-surface-muted">
                   <span className="min-w-0 flex-1">
-                    <span className="block font-medium text-foreground-strong">{nameOf(c.patient)}</span>
+                    <span className="block font-medium text-foreground-strong">{names.get(c.patient_id) ?? "Paciente"}</span>
                     <span className="block text-caption text-muted-foreground">{fmt.dateTime(c.occurred_at)}{c.reason ? ` · ${c.reason}` : ""}</span>
                   </span>
                   {c.follow_up_date ? <Badge tone="info">Retorno {fmt.date(c.follow_up_date)}</Badge> : null}

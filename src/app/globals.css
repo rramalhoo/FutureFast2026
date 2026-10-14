@@ -24,8 +24,8 @@
   --surface-sunken: #efedf1;
   --foreground: var(--gv-text);
   --foreground-strong: #2f2a33;
-  --muted-foreground: #6f6f6f;
-  --subtle-foreground: var(--gv-text-secondary);
+  --muted-foreground: #626262;
+  --subtle-foreground: #707070; /* #8A8A8A (--gv-text-secondary) fica para ícones/decoração */
   --border: #e6e2ea;
   --border-strong: #d6d0dc;
 

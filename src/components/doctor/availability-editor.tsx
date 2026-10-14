@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input, NativeSelect } from "@/components/ui/input";
 import { Field } from "@/components/ui/field";
-import { FormStatus, SubmitButton, fieldError } from "@/components/shared/form";
+import { ActionForm, FormStatus, SubmitButton, fieldError } from "@/components/shared/form";
 import type { ActionResult } from "@/lib/action-result";
 import { MODALITY } from "@/lib/labels";
 import { fmt, todayISO } from "@/lib/format";
@@ -56,7 +56,7 @@ export function AvailabilityEditor({ rules }: { rules: Rule[] }) {
           );
         })}
       </ul>
-      <form action={action} className="grid gap-3 rounded-2xl border border-dashed border-border-strong p-4 sm:grid-cols-[1fr_120px_120px_120px_1fr_auto] sm:items-end" noValidate>
+      <ActionForm action={action} className="grid gap-3 rounded-2xl border border-dashed border-border-strong p-4 sm:grid-cols-[1fr_120px_120px_120px_1fr_auto] sm:items-end" noValidate>
         <div className="sm:col-span-6"><FormStatus state={state.ok ? undefined : state} /></div>
         <Field label="Dia" htmlFor="weekday"><NativeSelect name="weekday" defaultValue="1">{WEEKDAYS.map((d, i) => <option key={d} value={i}>{d}</option>)}</NativeSelect></Field>
         <Field label="Início" htmlFor="startTime" error={fieldError(state, "startTime")}><Input name="startTime" type="time" defaultValue="08:00" /></Field>
@@ -64,7 +64,7 @@ export function AvailabilityEditor({ rules }: { rules: Rule[] }) {
         <Field label="Duração" htmlFor="slotMinutes"><NativeSelect name="slotMinutes" defaultValue="30">{[15, 20, 30, 40, 45, 60].map((m) => <option key={m} value={m}>{m} min</option>)}</NativeSelect></Field>
         <Field label="Modalidade" htmlFor="modality"><NativeSelect name="modality" defaultValue="in_person"><option value="in_person">Presencial</option><option value="telehealth">Teleconsulta</option></NativeSelect></Field>
         <SubmitButton variant="secondary" pendingLabel="Salvando…"><Plus /> Adicionar</SubmitButton>
-      </form>
+      </ActionForm>
     </div>
   );
 }
@@ -99,14 +99,14 @@ export function BlocksEditor({ blocks }: { blocks: Block[] }) {
       ) : (
         <p className="text-sm text-muted-foreground">Nenhum bloqueio futuro.</p>
       )}
-      <form action={action} className="grid gap-3 sm:grid-cols-[160px_110px_110px_1fr_auto] sm:items-end" noValidate>
+      <ActionForm action={action} className="grid gap-3 sm:grid-cols-[160px_110px_110px_1fr_auto] sm:items-end" noValidate>
         <div className="sm:col-span-5"><FormStatus state={state.ok ? undefined : state} /></div>
         <Field label="Data" htmlFor="date" error={fieldError(state, "date")}><Input name="date" type="date" min={todayISO()} defaultValue={todayISO()} /></Field>
         <Field label="De" htmlFor="startTime" error={fieldError(state, "startTime")}><Input name="startTime" type="time" defaultValue="12:00" /></Field>
         <Field label="Até" htmlFor="endTime" error={fieldError(state, "endTime")}><Input name="endTime" type="time" defaultValue="14:00" /></Field>
         <Field label="Motivo" htmlFor="reason"><Input name="reason" placeholder="Ex.: congresso" /></Field>
         <SubmitButton variant="secondary" pendingLabel="Salvando…">Bloquear</SubmitButton>
-      </form>
+      </ActionForm>
     </div>
   );
 }

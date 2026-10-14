@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Field } from "@/components/ui/field";
 import { Input, Textarea } from "@/components/ui/input";
 import { Alert } from "@/components/ui/alert";
-import { FormStatus, SubmitButton, fieldError } from "@/components/shared/form";
+import { ActionForm, FormStatus, SubmitButton, fieldError } from "@/components/shared/form";
 import { TimesEditor } from "@/components/shared/times-editor";
 import type { ActionResult } from "@/lib/action-result";
 import { todayISO } from "@/lib/format";
@@ -32,7 +32,7 @@ export function AddMedicationDialog() {
         <Button><Plus /> Registro pessoal</Button>
       </DialogTrigger>
       <DialogContent size="lg" title="Adicionar medicamento" description="Para acompanhar algo que você já usa. Não cria nem altera prescrições.">
-        <form action={action} className="space-y-5" noValidate>
+        <ActionForm action={action} className="space-y-5" noValidate>
           <Alert tone="info">Siga sempre a orientação do seu médico ou farmacêutico. O Genvity não recomenda doses.</Alert>
           <FormStatus state={state.ok ? undefined : state} />
           <div className="grid gap-4 sm:grid-cols-2">
@@ -68,7 +68,7 @@ export function AddMedicationDialog() {
             <Button type="button" variant="secondary" onClick={() => setOpen(false)}>Cancelar</Button>
             <SubmitButton pendingLabel="Salvando…">Adicionar</SubmitButton>
           </div>
-        </form>
+        </ActionForm>
       </DialogContent>
     </Dialog>
   );

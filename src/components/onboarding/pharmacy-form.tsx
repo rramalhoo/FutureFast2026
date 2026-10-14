@@ -7,7 +7,7 @@ import { completePharmacyOnboarding } from "@/server/actions/onboarding";
 import { Field } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { FormStatus, SubmitButton, fieldError } from "@/components/shared/form";
+import { ActionForm, FormStatus, SubmitButton, fieldError } from "@/components/shared/form";
 import { FileUpload, type UploadedFile } from "@/components/shared/file-upload";
 import { StateSelect } from "./state-select";
 import type { ActionResult } from "@/lib/action-result";
@@ -39,7 +39,7 @@ export function PharmacyOnboardingForm({ defaultName, userId }: { defaultName: s
   }
 
   return (
-    <form action={action} className="space-y-6" noValidate>
+    <ActionForm action={action} className="space-y-6" noValidate>
       <FormStatus state={state} />
       <Field label="Seu nome (responsável pela conta)" htmlFor="fullName" required error={fieldError(state, "fullName")}>
         <Input name="fullName" defaultValue={defaultName} autoComplete="name" />
@@ -121,6 +121,6 @@ export function PharmacyOnboardingForm({ defaultName, userId }: { defaultName: s
           Enviar para verificação
         </SubmitButton>
       </div>
-    </form>
+    </ActionForm>
   );
 }

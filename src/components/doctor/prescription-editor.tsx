@@ -41,7 +41,7 @@ export type DraftInitial = {
 };
 
 const DEFAULT_VALIDITY = { simple: 30, antimicrobial: 10, special_control: 30 } as const;
-const emptyItem = (): Item => ({ key: crypto.randomUUID(), medicationName: "", presentation: "", dosage: "", route: "Oral", frequency: "", timesPerDay: "", scheduleTimes: [], durationDays: "", continuousUse: false, quantity: "", instructions: "" });
+const emptyItem = (key: string = crypto.randomUUID()): Item => ({ key, medicationName: "", presentation: "", dosage: "", route: "Oral", frequency: "", timesPerDay: "", scheduleTimes: [], durationDays: "", continuousUse: false, quantity: "", instructions: "" });
 
 export function PrescriptionEditor({ patients, catalog, initial, defaultPatientId }: { patients: { id: string; name: string }[]; catalog: Catalog[]; initial?: DraftInitial; defaultPatientId?: string }) {
   const router = useRouter();
@@ -49,7 +49,10 @@ export function PrescriptionEditor({ patients, catalog, initial, defaultPatientI
   const [kind, setKind] = React.useState<DraftInitial["kind"]>(initial?.kind ?? "simple");
   const [validUntil, setValidUntil] = React.useState(initial?.validUntil || addDaysISO(todayISO(), DEFAULT_VALIDITY.simple));
   const [general, setGeneral] = React.useState(initial?.generalInstructions ?? "");
-  const [items, setItems] = React.useState<Item[]>(initial?.items.length ? initial.items.map((i) => ({ ...i, key: crypto.randomUUID() })) : [emptyItem()]);
+  const [items, setItems] = React.useState<Item[]>(
+    // Chaves determinísticas no estado inicial: iguais no servidor e no cliente (ids de label/campo).
+    initial?.items.length ? initial.items.map((i, idx) => ({ ...i, key: `item-${idx}` })) : [emptyItem("item-0")],
+  );
   const [allergies, setAllergies] = React.useState<{ substance: string; reaction: string | null; severity: string }[]>([]);
   const [saving, setSaving] = React.useState(false);
   const [errors, setErrors] = React.useState<string | null>(null);

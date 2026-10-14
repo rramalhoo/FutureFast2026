@@ -7,6 +7,7 @@ import { Card } from "@/components/ui/card";
 import { EmptyState } from "@/components/ui/empty-state";
 import { RequestCard } from "@/components/pharmacy/request-card";
 import { PHARMACY_REQUEST_STATUS } from "@/lib/labels";
+import { profileNames } from "@/server/queries/patient";
 import type { Enums } from "@/lib/supabase/types";
 
 export const metadata: Metadata = { title: "Solicitações" };
@@ -23,13 +24,11 @@ export default async function RequestsPage() {
   const supabase = await getServerSupabase();
   const { data } = await supabase
     .from("pharmacy_requests")
-    .select("id, status, created_at, items_description, patient_note, pharmacy_note, prescription_id, patient:patients!inner(birth_date, profile:profiles!inner(full_name))")
+    .select("id, status, created_at, items_description, patient_note, pharmacy_note, prescription_id, patient_id")
     .order("created_at", { ascending: true })
     .limit(200);
-  const rows = (data ?? []).map((r) => {
-    const p = r.patient as unknown as { birth_date: string | null; profile: { full_name: string } };
-    return { ...r, patient_name: p.profile.full_name, patient_birth: p.birth_date };
-  });
+  const names = await profileNames((data ?? []).map((r) => r.patient_id));
+  const rows = (data ?? []).map((r) => ({ ...r, patient_name: names.get(r.patient_id) ?? "Paciente" }));
   const closed = rows.filter((r) => ["completed", "cancelled"].includes(r.status)).reverse().slice(0, 12);
 
   return (

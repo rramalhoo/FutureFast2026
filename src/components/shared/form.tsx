@@ -6,8 +6,40 @@ import { Button, type ButtonProps } from "@/components/ui/button";
 import { Alert } from "@/components/ui/alert";
 import type { ActionResult } from "@/lib/action-result";
 
+const PendingContext = React.createContext(false);
+
+/**
+ * Formulário que envia para uma Server Action via transition, sem o reset
+ * automático do React 19 — os valores digitados permanecem quando o servidor
+ * retorna erros de validação.
+ */
+export function ActionForm({
+  action,
+  children,
+  ...props
+}: Omit<React.ComponentProps<"form">, "action" | "onSubmit"> & { action: (formData: FormData) => void }) {
+  const [pending, startTransition] = React.useTransition();
+  return (
+    <PendingContext.Provider value={pending}>
+      <form
+        {...props}
+        aria-busy={pending || undefined}
+        onSubmit={(event) => {
+          event.preventDefault();
+          const formData = new FormData(event.currentTarget);
+          startTransition(() => action(formData));
+        }}
+      >
+        {children}
+      </form>
+    </PendingContext.Provider>
+  );
+}
+
 export function SubmitButton({ children, pendingLabel, ...props }: ButtonProps & { pendingLabel?: string }) {
-  const { pending } = useFormStatus();
+  const status = useFormStatus();
+  const transitionPending = React.useContext(PendingContext);
+  const pending = status.pending || transitionPending;
   return (
     <Button type="submit" loading={pending} {...props}>
       {pending && pendingLabel ? pendingLabel : children}

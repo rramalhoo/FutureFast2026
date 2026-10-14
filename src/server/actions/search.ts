@@ -37,13 +37,7 @@ export async function globalSearch(input: string): Promise<SearchHit[]> {
     }
     case "doctor": {
       const [{ data: care }, { data: rx }] = await Promise.all([
-        supabase
-          .from("care_relationships")
-          .select("patient_id, status, profiles:patient_id!inner(full_name)")
-          .eq("doctor_id", session.userId)
-          .neq("status", "revoked")
-          .ilike("profiles.full_name", `%${q}%`)
-          .limit(6),
+        supabase.from("care_relationships").select("patient_id").eq("doctor_id", session.userId).neq("status", "revoked"),
         supabase
           .from("prescription_items")
           .select("medication_name, prescription_id, prescriptions!inner(doctor_id)")
@@ -51,10 +45,11 @@ export async function globalSearch(input: string): Promise<SearchHit[]> {
           .ilike("medication_name", `%${q}%`)
           .limit(5),
       ]);
-      care?.forEach((c) => {
-        const profile = c.profiles as unknown as { full_name: string } | null;
-        hits.push({ group: "Pacientes", title: profile?.full_name ?? "Paciente", href: `/medico/pacientes/${c.patient_id}` });
-      });
+      const ids = (care ?? []).map((c) => c.patient_id);
+      if (ids.length) {
+        const { data: people } = await supabase.from("profiles").select("id, full_name").in("id", ids).ilike("full_name", `%${q}%`).limit(6);
+        people?.forEach((p) => hits.push({ group: "Pacientes", title: p.full_name, href: `/medico/pacientes/${p.id}` }));
+      }
       rx?.forEach((r) => hits.push({ group: "Prescrições", title: r.medication_name, href: `/medico/prescricoes/${r.prescription_id}` }));
       break;
     }

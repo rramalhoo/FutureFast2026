@@ -16,7 +16,7 @@ import { SimpleBarChart } from "@/components/charts/bar-chart";
 import { AppointmentButtons } from "@/components/doctor/appointment-buttons";
 import { MODALITY, PRESCRIPTION_STATUS } from "@/lib/labels";
 import { addDaysISO, fmt, localDateISO, todayISO, zonedDateTime } from "@/lib/format";
-import { nameOf } from "@/server/queries/patient";
+import { profileNames } from "@/server/queries/patient";
 import { firstName } from "@/lib/utils";
 
 export const metadata: Metadata = { title: "Visão geral" };
@@ -33,7 +33,7 @@ export default async function DoctorHome({ searchParams }: PageProps<"/medico">)
     supabase.from("doctors").select("verification_status").eq("id", session.userId).single(),
     supabase
       .from("appointments")
-      .select("id, starts_at, modality, status, reason, patient:patients!inner(profile:profiles!inner(full_name))")
+      .select("id, starts_at, modality, status, reason, patient_id")
       .eq("doctor_id", session.userId)
       .eq("status", "confirmed")
       .gte("starts_at", zonedDateTime(today, "00:00").toISOString())
@@ -41,7 +41,7 @@ export default async function DoctorHome({ searchParams }: PageProps<"/medico">)
       .order("starts_at"),
     supabase
       .from("appointments")
-      .select("id, starts_at, modality, status, reason, patient:patients!inner(profile:profiles!inner(full_name))")
+      .select("id, starts_at, modality, status, reason, patient_id")
       .eq("doctor_id", session.userId)
       .eq("status", "requested")
       .order("starts_at")
@@ -50,7 +50,7 @@ export default async function DoctorHome({ searchParams }: PageProps<"/medico">)
     supabase.from("messages").select("id", { count: "exact", head: true }).is("read_at", null).neq("sender_id", session.userId),
     supabase
       .from("prescriptions")
-      .select("id, status, created_at, patient:patients!inner(profile:profiles!inner(full_name)), prescription_items(medication_name)")
+      .select("id, status, created_at, patient_id, prescription_items(medication_name)")
       .eq("doctor_id", session.userId)
       .order("created_at", { ascending: false })
       .limit(5),
@@ -58,6 +58,7 @@ export default async function DoctorHome({ searchParams }: PageProps<"/medico">)
     supabase.from("prescriptions").select("id", { count: "exact", head: true }).eq("doctor_id", session.userId).gte("issued_at", zonedDateTime(monthStart, "00:00").toISOString()),
   ]);
 
+  const names = await profileNames([...(upcoming.data ?? []), ...(requests.data ?? []), ...(rxs.data ?? [])].map((r) => r.patient_id));
   const todayAppts = (upcoming.data ?? []).filter((a) => localDateISO(a.starts_at) === today);
   const weekData = Array.from({ length: 7 }).map((_, i) => {
     const d = addDaysISO(today, i);
@@ -69,7 +70,7 @@ export default async function DoctorHome({ searchParams }: PageProps<"/medico">)
     <div className="space-y-8">
       <PageHeader
         eyebrow={fmt.weekday(new Date())}
-        title={`Olá, Dr(a). ${firstName(session.profile.full_name)}`}
+        title={`Olá, ${firstName(session.profile.full_name)}`}
         description="Seu dia em um relance."
         actions={
           approved ? (
@@ -107,9 +108,9 @@ export default async function DoctorHome({ searchParams }: PageProps<"/medico">)
                   {todayAppts.map((a) => (
                     <li key={a.id} className="flex items-center gap-3 rounded-2xl border border-border p-3">
                       <span className="w-14 text-center font-semibold text-foreground-strong tabular">{fmt.time(a.starts_at)}</span>
-                      <Avatar name={nameOf(a.patient)} size="sm" />
+                      <Avatar name={names.get(a.patient_id) ?? "Paciente"} size="sm" />
                       <span className="min-w-0 flex-1">
-                        <span className="block truncate font-medium text-foreground-strong">{nameOf(a.patient)}</span>
+                        <span className="block truncate font-medium text-foreground-strong">{names.get(a.patient_id) ?? "Paciente"}</span>
                         <span className="block truncate text-caption text-muted-foreground">{MODALITY[a.modality]}{a.reason ? ` · ${a.reason}` : ""}</span>
                       </span>
                       <AppointmentButtons id={a.id} status={a.status} startsAt={a.starts_at} />
@@ -129,7 +130,7 @@ export default async function DoctorHome({ searchParams }: PageProps<"/medico">)
                   {requests.data.map((a) => (
                     <li key={a.id} className="flex flex-col gap-3 rounded-2xl border border-border p-3 sm:flex-row sm:items-center">
                       <span className="min-w-0 flex-1">
-                        <span className="block font-medium text-foreground-strong">{nameOf(a.patient)}</span>
+                        <span className="block font-medium text-foreground-strong">{names.get(a.patient_id) ?? "Paciente"}</span>
                         <span className="block text-caption text-muted-foreground">{fmt.weekday(a.starts_at)} às {fmt.time(a.starts_at)} · {MODALITY[a.modality]}</span>
                         {a.reason ? <span className="block text-caption text-muted-foreground">“{a.reason}”</span> : null}
                       </span>
@@ -160,7 +161,7 @@ export default async function DoctorHome({ searchParams }: PageProps<"/medico">)
                     <li key={r.id}>
                       <Link href={`/medico/prescricoes/${r.id}`} className="flex items-center gap-3 py-3 hover:opacity-80">
                         <span className="min-w-0 flex-1">
-                          <span className="block truncate font-medium text-foreground-strong">{nameOf(r.patient)}</span>
+                          <span className="block truncate font-medium text-foreground-strong">{names.get(r.patient_id) ?? "Paciente"}</span>
                           <span className="block truncate text-caption text-muted-foreground">{(r.prescription_items as { medication_name: string }[]).map((i) => i.medication_name).join(", ") || "Sem itens"}</span>
                         </span>
                         <Badge tone={PRESCRIPTION_STATUS[r.status].tone}>{PRESCRIPTION_STATUS[r.status].label}</Badge>

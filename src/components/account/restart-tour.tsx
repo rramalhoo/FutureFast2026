@@ -4,7 +4,9 @@ import { useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
 import { updatePreferencesAction } from "@/server/actions/account";
+import { allowTourAgain } from "@/components/shared/welcome-tour";
 
 export function RestartTourButton() {
   const [pending, start] = useTransition();
@@ -16,7 +18,9 @@ export function RestartTourButton() {
       onClick={() =>
         start(async () => {
           await updatePreferencesAction({ tourDone: false });
-          router.refresh();
+          allowTourAgain();
+          toast.success("O tour será exibido na página inicial.");
+          router.push("/entrar");
         })
       }
     >

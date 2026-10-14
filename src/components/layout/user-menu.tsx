@@ -1,5 +1,6 @@
 "use client";
 
+import * as React from "react";
 import Link from "next/link";
 import { useTheme } from "next-themes";
 import { LifeBuoy, LogOut, Monitor, Moon, Sun, UserRound } from "lucide-react";
@@ -15,7 +16,12 @@ import {
 
 export function UserMenu({ name, email, roleLabel }: { name: string; email: string; roleLabel: string }) {
   const { setTheme, theme } = useTheme();
+  // O formulário fica fora do menu: ao selecionar "Sair" o menu fecha e
+  // desmonta seu conteúdo antes que um submit interno aconteça.
+  const signOutRef = React.useRef<HTMLFormElement>(null);
   return (
+    <>
+    <form ref={signOutRef} action="/auth/signout" method="post" className="hidden" aria-hidden />
     <DropdownMenu>
       <DropdownMenuTrigger className="flex items-center gap-2.5 rounded-xl p-1 pr-2 transition-colors hover:bg-surface-sunken" aria-label="Menu da conta">
         <Avatar name={name} size="sm" />
@@ -60,14 +66,11 @@ export function UserMenu({ name, email, roleLabel }: { name: string; email: stri
           ))}
         </div>
         <DropdownMenuSeparator />
-        <form action="/auth/signout" method="post">
-          <DropdownMenuItem asChild tone="danger">
-            <button type="submit" className="w-full">
-              <LogOut /> Sair
-            </button>
-          </DropdownMenuItem>
-        </form>
+        <DropdownMenuItem tone="danger" onSelect={() => signOutRef.current?.requestSubmit()}>
+          <LogOut /> Sair
+        </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
+    </>
   );
 }

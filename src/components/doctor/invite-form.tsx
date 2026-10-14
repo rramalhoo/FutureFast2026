@@ -4,7 +4,7 @@ import { useActionState, useEffect, useRef } from "react";
 import { UserPlus } from "lucide-react";
 import { invitePatientAction } from "@/server/actions/care";
 import { Input } from "@/components/ui/input";
-import { FormStatus, SubmitButton } from "@/components/shared/form";
+import { ActionForm, FormStatus, SubmitButton } from "@/components/shared/form";
 import type { ActionResult } from "@/lib/action-result";
 
 export function InviteForm({ disabled }: { disabled?: boolean }) {
@@ -14,7 +14,7 @@ export function InviteForm({ disabled }: { disabled?: boolean }) {
     if (state.ok) ref.current?.reset();
   }, [state]);
   return (
-    <form ref={ref} action={action} className="space-y-3" noValidate>
+    <ActionForm ref={ref} action={action} className="space-y-3" noValidate>
       <FormStatus state={state} />
       <div className="flex flex-col gap-2 sm:flex-row">
         <label htmlFor="invite-email" className="sr-only">E-mail do paciente</label>
@@ -22,6 +22,6 @@ export function InviteForm({ disabled }: { disabled?: boolean }) {
         <SubmitButton disabled={disabled} pendingLabel="Enviando…"><UserPlus /> Convidar</SubmitButton>
       </div>
       <p className="text-caption text-muted-foreground">O paciente precisa aceitar o convite no app. Por privacidade, não informamos se o e-mail possui conta.</p>
-    </form>
+    </ActionForm>
   );
 }

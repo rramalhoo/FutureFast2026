@@ -17,7 +17,7 @@ import { Field } from "@/components/ui/field";
 import { Input, NativeSelect, Textarea } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
-import { FormStatus, PasswordInput, SubmitButton, fieldError } from "@/components/shared/form";
+import { ActionForm, FormStatus, PasswordInput, SubmitButton, fieldError } from "@/components/shared/form";
 import { StateSelect } from "@/components/onboarding/state-select";
 import { useA11yPreferences } from "@/components/shared/providers";
 import type { ActionResult } from "@/lib/action-result";
@@ -29,7 +29,7 @@ const initial: ActionResult = { ok: false, error: "" };
 export function ProfileForm({ fullName, email }: { fullName: string; email: string }) {
   const [state, action] = useActionState(updateProfileAction, initial);
   return (
-    <form action={action} className="space-y-5" noValidate>
+    <ActionForm action={action} className="space-y-5" noValidate>
       <FormStatus state={state} />
       <Field label="Nome completo" htmlFor="fullName" error={fieldError(state, "fullName")}>
         <Input name="fullName" defaultValue={fullName} autoComplete="name" />
@@ -40,14 +40,14 @@ export function ProfileForm({ fullName, email }: { fullName: string; email: stri
       <div className="flex justify-end">
         <SubmitButton pendingLabel="Salvando…">Salvar</SubmitButton>
       </div>
-    </form>
+    </ActionForm>
   );
 }
 
 export function PatientDetailsForm({ patient }: { patient: Tables<"patients"> }) {
   const [state, action] = useActionState(updatePatientDetailsAction, initial);
   return (
-    <form action={action} className="space-y-5" noValidate>
+    <ActionForm action={action} className="space-y-5" noValidate>
       <FormStatus state={state} />
       <div className="grid gap-5 sm:grid-cols-2">
         <Field label="Data de nascimento" htmlFor="birthDate" error={fieldError(state, "birthDate")}>
@@ -89,7 +89,7 @@ export function PatientDetailsForm({ patient }: { patient: Tables<"patients"> })
       <div className="flex justify-end">
         <SubmitButton pendingLabel="Salvando…">Salvar dados</SubmitButton>
       </div>
-    </form>
+    </ActionForm>
   );
 }
 
@@ -100,7 +100,7 @@ export function PasswordForm() {
     if (state.ok) ref.current?.reset();
   }, [state]);
   return (
-    <form ref={ref} action={action} className="space-y-5" noValidate>
+    <ActionForm ref={ref} action={action} className="space-y-5" noValidate>
       <FormStatus state={state} />
       <div className="grid gap-5 sm:grid-cols-2">
         <Field label="Nova senha" htmlFor="password" error={fieldError(state, "password")}>
@@ -113,7 +113,7 @@ export function PasswordForm() {
       <div className="flex justify-end">
         <SubmitButton pendingLabel="Alterando…">Alterar senha</SubmitButton>
       </div>
-    </form>
+    </ActionForm>
   );
 }
 
@@ -252,7 +252,7 @@ function ToggleRow({ label, hint, checked, onChange }: { label: string; hint: st
 export function DsrForm() {
   const [state, action] = useActionState(createDsrAction, initial);
   return (
-    <form action={action} className="space-y-4" noValidate>
+    <ActionForm action={action} className="space-y-4" noValidate>
       <FormStatus state={state} />
       <Field label="Tipo de solicitação" htmlFor="kind">
         <NativeSelect name="kind" defaultValue="correction">
@@ -270,7 +270,7 @@ export function DsrForm() {
           Enviar solicitação
         </SubmitButton>
       </div>
-    </form>
+    </ActionForm>
   );
 }
 

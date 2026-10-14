@@ -12,7 +12,7 @@ import { Field } from "@/components/ui/field";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { EmptyState } from "@/components/ui/empty-state";
-import { FormStatus, SubmitButton, fieldError } from "@/components/shared/form";
+import { ActionForm, FormStatus, SubmitButton, fieldError } from "@/components/shared/form";
 import type { ActionResult } from "@/lib/action-result";
 import type { Tables } from "@/lib/supabase/types";
 import { STOCK_STATUS } from "@/lib/labels";
@@ -119,7 +119,7 @@ function InventoryForm({ row, catalog, onDone }: { row: Row | null; catalog: Cat
   const [presentation, setPresentation] = React.useState(row?.presentation ?? "");
   const match = catalog.find((c) => c.name.toLowerCase() === name.toLowerCase());
   return (
-    <form action={action} className="space-y-4" noValidate>
+    <ActionForm action={action} className="space-y-4" noValidate>
       <FormStatus state={state.ok ? undefined : state} />
       {row ? <input type="hidden" name="id" value={row.id} /> : null}
       <input type="hidden" name="medicationId" value={match?.id ?? ""} />
@@ -142,6 +142,6 @@ function InventoryForm({ row, catalog, onDone }: { row: Row | null; catalog: Cat
         <Button type="button" variant="secondary" onClick={onDone}>Cancelar</Button>
         <SubmitButton pendingLabel="Salvando…">Salvar</SubmitButton>
       </div>
-    </form>
+    </ActionForm>
   );
 }

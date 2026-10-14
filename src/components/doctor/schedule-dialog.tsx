@@ -8,7 +8,7 @@ import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { Field } from "@/components/ui/field";
 import { Input, NativeSelect } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { FormStatus, SubmitButton, fieldError } from "@/components/shared/form";
+import { ActionForm, FormStatus, SubmitButton, fieldError } from "@/components/shared/form";
 import type { ActionResult } from "@/lib/action-result";
 import { todayISO } from "@/lib/format";
 
@@ -36,7 +36,7 @@ export function ScheduleForPatientDialog({
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>{trigger}</DialogTrigger>
       <DialogContent title="Agendar consulta" description={patientName ? `Para ${patientName}. A consulta já entra confirmada.` : "A consulta já entra confirmada e o paciente é notificado."}>
-        <form action={action} className="space-y-4" noValidate>
+        <ActionForm action={action} className="space-y-4" noValidate>
           <FormStatus state={state.ok ? undefined : state} />
           {patientId ? (
             <input type="hidden" name="patientId" value={patientId} />
@@ -68,7 +68,7 @@ export function ScheduleForPatientDialog({
             <Button type="button" variant="secondary" onClick={() => setOpen(false)}>Cancelar</Button>
             <SubmitButton pendingLabel="Agendando…">Agendar</SubmitButton>
           </div>
-        </form>
+        </ActionForm>
       </DialogContent>
     </Dialog>
   );

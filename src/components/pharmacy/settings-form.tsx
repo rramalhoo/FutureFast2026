@@ -4,7 +4,7 @@ import { useActionState } from "react";
 import { updatePharmacySettingsAction } from "@/server/actions/pharmacy";
 import { Field } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import { FormStatus, SubmitButton, fieldError } from "@/components/shared/form";
+import { ActionForm, FormStatus, SubmitButton, fieldError } from "@/components/shared/form";
 import { StateSelect } from "@/components/onboarding/state-select";
 import type { ActionResult } from "@/lib/action-result";
 import type { Tables } from "@/lib/supabase/types";
@@ -12,7 +12,7 @@ import type { Tables } from "@/lib/supabase/types";
 export function PharmacySettingsForm({ pharmacy, canEdit }: { pharmacy: Tables<"pharmacies">; canEdit: boolean }) {
   const [state, action] = useActionState<ActionResult, FormData>(updatePharmacySettingsAction, { ok: false, error: "" });
   return (
-    <form action={action} className="space-y-4" noValidate>
+    <ActionForm action={action} className="space-y-4" noValidate>
       <FormStatus state={state} />
       <fieldset disabled={!canEdit} className="space-y-4">
         <div className="grid gap-4 sm:grid-cols-2">
@@ -35,6 +35,6 @@ export function PharmacySettingsForm({ pharmacy, canEdit }: { pharmacy: Tables<"
         <Field label="Horário de funcionamento" htmlFor="openingHours"><Input name="openingHours" defaultValue={pharmacy.opening_hours ?? ""} /></Field>
       </fieldset>
       {canEdit ? <div className="flex justify-end"><SubmitButton pendingLabel="Salvando…">Salvar</SubmitButton></div> : null}
-    </form>
+    </ActionForm>
   );
 }

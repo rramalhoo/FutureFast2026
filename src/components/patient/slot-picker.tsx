@@ -44,6 +44,7 @@ export function SlotPicker({ slots, selected, onSelect }: { slots: Slot[] | null
           const date = new Date(`${d}T12:00:00-03:00`);
           return (
             <button
+              type="button"
               key={d}
               role="tab"
               aria-selected={d === activeDay}
@@ -63,6 +64,7 @@ export function SlotPicker({ slots, selected, onSelect }: { slots: Slot[] | null
       <div className="grid grid-cols-3 gap-2 sm:grid-cols-5" role="radiogroup" aria-label="Horários">
         {daySlots.map((s) => (
           <button
+            type="button"
             key={s.starts_at}
             role="radio"
             aria-checked={selected === s.starts_at}

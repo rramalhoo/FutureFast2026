@@ -4,7 +4,7 @@ import { Boxes, ClipboardCheck, Inbox, PackageCheck, QrCode, TriangleAlert } fro
 import { requireRole } from "@/lib/auth";
 import { getServerSupabase } from "@/lib/supabase/server";
 import { loadMyPharmacy } from "@/server/queries/pharmacy";
-import { nameOf } from "@/server/queries/patient";
+import { profileNames } from "@/server/queries/patient";
 import { PageHeader } from "@/components/ui/page-header";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { StatCard } from "@/components/ui/stat-card";
@@ -30,12 +30,13 @@ export default async function PharmacyHome({ searchParams }: PageProps<"/farmaci
   const staleBefore = new Date(nowMs() - 7 * 86400000).toISOString();
 
   const [requests, dispensed, lookupsToday, inventory] = await Promise.all([
-    supabase.from("pharmacy_requests").select("id, status, created_at, items_description, prescription_id, patient:patients!inner(profile:profiles!inner(full_name))").order("created_at", { ascending: false }).limit(50),
+    supabase.from("pharmacy_requests").select("id, status, created_at, items_description, prescription_id, patient_id").order("created_at", { ascending: false }).limit(50),
     supabase.from("dispensations").select("id", { count: "exact", head: true }).gte("dispensed_at", since30),
     supabase.from("prescription_pharmacy_access").select("id", { count: "exact", head: true }).gte("accessed_at", todayStart),
     supabase.from("pharmacy_inventory").select("id, product_name, stock_status, updated_at"),
   ]);
   const reqs = requests.data ?? [];
+  const names = await profileNames(reqs.map((r) => r.patient_id));
   const open = reqs.filter((r) => !["completed", "cancelled"].includes(r.status));
   const pendingReview = open.filter((r) => ["received", "reviewing"].includes(r.status) && r.prescription_id);
   const inv = inventory.data ?? [];
@@ -69,7 +70,7 @@ export default async function PharmacyHome({ searchParams }: PageProps<"/farmaci
                 {open.slice(0, 6).map((r) => (
                   <li key={r.id} className="flex items-center gap-3 py-3">
                     <span className="min-w-0 flex-1">
-                      <span className="block font-medium text-foreground-strong">{nameOf(r.patient)}</span>
+                      <span className="block font-medium text-foreground-strong">{names.get(r.patient_id) ?? "Paciente"}</span>
                       <span className="block truncate text-caption text-muted-foreground">{r.prescription_id ? "Com receita · " : ""}{r.items_description ?? "—"} · {fmt.relative(r.created_at)}</span>
                     </span>
                     <Badge tone={PHARMACY_REQUEST_STATUS[r.status].tone}>{PHARMACY_REQUEST_STATUS[r.status].label}</Badge>

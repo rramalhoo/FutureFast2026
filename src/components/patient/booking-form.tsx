@@ -10,7 +10,7 @@ import { Field } from "@/components/ui/field";
 import { Textarea } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Alert } from "@/components/ui/alert";
-import { FormStatus, SubmitButton } from "@/components/shared/form";
+import { ActionForm, FormStatus, SubmitButton } from "@/components/shared/form";
 import type { ActionResult } from "@/lib/action-result";
 import { MODALITY } from "@/lib/labels";
 import { fmt } from "@/lib/format";
@@ -34,7 +34,7 @@ export function BookingForm({ doctorId, doctorName, slots, modalities }: { docto
   }
 
   return (
-    <form action={action} className="space-y-6">
+    <ActionForm action={action} className="space-y-6">
       <FormStatus state={state} />
       <input type="hidden" name="doctorId" value={doctorId} />
       <input type="hidden" name="modality" value={modality} />
@@ -81,6 +81,6 @@ export function BookingForm({ doctorId, doctorName, slots, modalities }: { docto
       <div className="flex justify-end">
         <SubmitButton size="lg" disabled={!selected} pendingLabel="Enviando…">Solicitar consulta</SubmitButton>
       </div>
-    </form>
+    </ActionForm>
   );
 }

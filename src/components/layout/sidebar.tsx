@@ -16,7 +16,7 @@ export function SidebarNav({ role, onNavigate }: { role: UserRole; onNavigate?: 
       {NAV[role].map((section, i) => (
         <div key={i}>
           {section.title ? (
-            <p className="mb-1.5 px-3 text-caption font-medium tracking-wide text-subtle-foreground uppercase">
+            <p className="mb-1.5 px-3 text-caption font-medium tracking-wide text-muted-foreground uppercase">
               {section.title}
             </p>
           ) : null}

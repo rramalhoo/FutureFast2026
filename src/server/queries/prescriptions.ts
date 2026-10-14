@@ -14,11 +14,17 @@ export async function loadPrescription(id: string) {
     .maybeSingle();
   if (!data) return null;
   const items = [...(data.prescription_items ?? [])].sort((a, b) => a.position - b.position);
+  // Farmácias não leem `patients`; o nome vem de `profiles` (autorizado pela solicitação).
+  let patient = data.patient as unknown as { birth_date: string | null; profile: { full_name: string } } | null;
+  if (!patient) {
+    const { data: profile } = await supabase.from("profiles").select("full_name").eq("id", data.patient_id).maybeSingle();
+    patient = profile ? { birth_date: null, profile } : null;
+  }
   return {
     ...data,
     prescription_items: items,
     doctor: data.doctor as unknown as { crm: string; crm_state: string; specialty: string; rqe: string | null; profile: { full_name: string } },
-    patient: data.patient as unknown as { birth_date: string | null; profile: { full_name: string } } | null,
+    patient,
     dispensations: (data.dispensations ?? []) as unknown as {
       id: string;
       dispensed_at: string;

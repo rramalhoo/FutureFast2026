@@ -21,7 +21,7 @@ const NEXT: Partial<Record<Status, Status[]>> = {
   ready: ["completed", "cancelled"],
 };
 
-export function RequestCard({ request }: { request: { id: string; status: Status; created_at: string; patient_name: string; patient_birth?: string | null; items_description: string | null; patient_note: string | null; pharmacy_note: string | null; prescription_id: string | null } }) {
+export function RequestCard({ request }: { request: { id: string; status: Status; created_at: string; patient_name: string; items_description: string | null; patient_note: string | null; pharmacy_note: string | null; prescription_id: string | null } }) {
   const options = NEXT[request.status] ?? [];
   const [next, setNext] = React.useState<Status | "">(options[0] ?? "");
   const [note, setNote] = React.useState("");
@@ -43,7 +43,7 @@ export function RequestCard({ request }: { request: { id: string; status: Status
       <div className="flex items-start justify-between gap-2">
         <div>
           <p className="font-semibold text-foreground-strong">{request.patient_name}</p>
-          <p className="text-caption text-muted-foreground">{fmt.relative(request.created_at)}{request.patient_birth ? ` · nasc. ${fmt.date(request.patient_birth)}` : ""}</p>
+          <p className="text-caption text-muted-foreground">{fmt.relative(request.created_at)}</p>
         </div>
         <Badge tone={PHARMACY_REQUEST_STATUS[request.status].tone}>{PHARMACY_REQUEST_STATUS[request.status].label}</Badge>
       </div>
