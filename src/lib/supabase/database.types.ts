@@ -1074,6 +1074,9 @@ isOneToOne: false
 "admin_record_payment":
 { Args: { "p_amount_cents": number,"p_reference"?: string,"p_status": Database["public"]['Enums']["payment_status"],"p_subscription": string }; Returns: string
                            },
+"admin_report":
+{ Args: Record<PropertyKey, never>; Returns: Json
+                           },
 "admin_resolve_dsr":
 { Args: { "p_id": string,"p_notes": string,"p_status": Database["public"]['Enums']["dsr_status"] }; Returns: undefined
                            },

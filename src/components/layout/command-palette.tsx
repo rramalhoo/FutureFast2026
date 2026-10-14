@@ -28,11 +28,7 @@ export function CommandPalette({ role }: { role: UserRole }) {
   }, []);
 
   React.useEffect(() => {
-    if (query.trim().length < 2) {
-      setHits([]);
-      return;
-    }
-    setLoading(true);
+    if (query.trim().length < 2) return;
     const t = setTimeout(async () => {
       try {
         setHits(await globalSearch(query));
@@ -42,6 +38,15 @@ export function CommandPalette({ role }: { role: UserRole }) {
     }, 220);
     return () => clearTimeout(t);
   }, [query]);
+
+  const onQueryChange = (value: string) => {
+    setQuery(value);
+    if (value.trim().length >= 2) setLoading(true);
+    else {
+      setHits([]);
+      setLoading(false);
+    }
+  };
 
   const go = (href: string) => {
     setOpen(false);
@@ -79,7 +84,7 @@ export function CommandPalette({ role }: { role: UserRole }) {
                 <Search className="size-5 text-subtle-foreground" aria-hidden />
                 <Command.Input
                   value={query}
-                  onValueChange={setQuery}
+                  onValueChange={onQueryChange}
                   placeholder="Pesquise páginas, pacientes, receitas…"
                   className="h-14 flex-1 bg-transparent text-base text-foreground-strong outline-none placeholder:text-subtle-foreground"
                 />

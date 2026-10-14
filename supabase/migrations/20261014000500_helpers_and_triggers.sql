@@ -389,7 +389,8 @@ begin
   select status into v_status from public.prescriptions
   where id = coalesce(new.prescription_id, old.prescription_id);
 
-  if v_status is distinct from 'draft' then
+  -- Parent ausente = exclusão em cascata de um rascunho (já validada na própria prescrição).
+  if v_status is not null and v_status <> 'draft' then
     raise exception 'Itens só podem ser alterados enquanto a prescrição é rascunho.' using errcode = '42501';
   end if;
 

@@ -8,6 +8,7 @@ import { logDoseAction, undoDoseAction } from "@/server/actions/patient";
 import type { ScheduledDose } from "@/lib/doses";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { nowMs } from "@/lib/clock";
 
 const statusStyles: Record<ScheduledDose["status"], { label: string; cls: string }> = {
   taken: { label: "Tomada", cls: "bg-success-soft text-success-foreground" },
@@ -100,7 +101,7 @@ export function NextDoseCard({ dose }: { dose: ScheduledDose | null }) {
     );
   }
   const busy = pendingKey === `${dose.medicationId}|${dose.scheduledFor}`;
-  const minutes = Math.round((new Date(dose.scheduledFor).getTime() - Date.now()) / 60000);
+  const minutes = Math.round((new Date(dose.scheduledFor).getTime() - nowMs()) / 60000);
   const when = minutes > 0 ? (minutes < 60 ? `em ${minutes} min` : `em ${Math.floor(minutes / 60)}h${minutes % 60 ? ` ${minutes % 60}min` : ""}`) : minutes > -30 ? "agora" : "atrasada";
   return (
     <div className="relative flex h-full flex-col justify-between overflow-hidden rounded-[1.75rem] bg-[linear-gradient(140deg,#9448bd,#5f2482)] p-6 text-white shadow-glow">

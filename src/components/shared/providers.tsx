@@ -43,6 +43,8 @@ export function Providers({ children, initialA11y }: { children: React.ReactNode
       const stored = window.localStorage.getItem(STORAGE_KEY);
       if (stored) {
         const parsed = JSON.parse(stored) as A11yPreferences;
+        // Sincroniza com armazenamento externo (localStorage) após a hidratação.
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         setPrefsState(parsed);
         applyToDocument(parsed);
       }

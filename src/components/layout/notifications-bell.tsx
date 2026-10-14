@@ -18,18 +18,14 @@ export function NotificationsBell({ userId }: { userId: string }) {
   const [open, setOpen] = React.useState(false);
   const unread = items.filter((n) => !n.read_at).length;
 
-  const load = React.useCallback(async () => {
-    const { data } = await getBrowserSupabase()
+  React.useEffect(() => {
+    const supabase = getBrowserSupabase();
+    void supabase
       .from("notifications")
       .select("*")
       .order("created_at", { ascending: false })
-      .limit(12);
-    setItems(data ?? []);
-  }, []);
-
-  React.useEffect(() => {
-    void load();
-    const supabase = getBrowserSupabase();
+      .limit(12)
+      .then(({ data }) => setItems(data ?? []));
     const channel = supabase
       .channel(`notifications:${userId}`)
       .on("postgres_changes", { event: "INSERT", schema: "public", table: "notifications", filter: `user_id=eq.${userId}` }, (payload) => {
@@ -40,7 +36,7 @@ export function NotificationsBell({ userId }: { userId: string }) {
     return () => {
       void supabase.removeChannel(channel);
     };
-  }, [load, router, userId]);
+  }, [router, userId]);
 
   async function markAllRead() {
     const ids = items.filter((n) => !n.read_at).map((n) => n.id);

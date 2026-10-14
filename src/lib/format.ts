@@ -71,3 +71,35 @@ export function addDaysISO(dateISO: string, days: number) {
   d.setUTCDate(d.getUTCDate() + days);
   return d.toISOString().slice(0, 10);
 }
+
+/** Data local (YYYY-MM-DD, fuso da aplicação) de um instante. */
+export function localDateISO(value: string | Date) {
+  return new Intl.DateTimeFormat("en-CA", { timeZone: APP_TIME_ZONE }).format(new Date(value));
+}
+
+/** Dia da semana (0=domingo) de uma data YYYY-MM-DD. */
+export function weekdayOf(dateISO: string) {
+  return new Date(`${dateISO}T12:00:00Z`).getUTCDay();
+}
+
+export type CalendarView = "day" | "week" | "month";
+
+/** Intervalo [início, fim] (datas locais) exibido em cada visualização. */
+export function calendarRange(view: CalendarView, dateISO: string) {
+  if (view === "day") return { from: dateISO, to: dateISO };
+  if (view === "week") {
+    const from = addDaysISO(dateISO, -weekdayOf(dateISO));
+    return { from, to: addDaysISO(from, 6) };
+  }
+  const first = `${dateISO.slice(0, 7)}-01`;
+  const from = addDaysISO(first, -weekdayOf(first));
+  return { from, to: addDaysISO(from, 41) };
+}
+
+export function shiftCalendar(view: CalendarView, dateISO: string, dir: 1 | -1) {
+  if (view === "day") return addDaysISO(dateISO, dir);
+  if (view === "week") return addDaysISO(dateISO, 7 * dir);
+  const d = new Date(`${dateISO.slice(0, 7)}-01T12:00:00Z`);
+  d.setUTCMonth(d.getUTCMonth() + dir);
+  return d.toISOString().slice(0, 10);
+}
