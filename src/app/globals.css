@@ -1,0 +1,378 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* ==========================================================================
+   Genvity Design Tokens
+   Paleta oficial + variações semânticas. Texto secundário usa um cinza
+   levemente mais escuro que #8A8A8A para atingir contraste WCAG AA (4.5:1);
+   #8A8A8A fica reservado para ícones, placeholders e elementos decorativos.
+   ========================================================================== */
+:root {
+  --gv-purple: #9448bd;
+  --gv-purple-dark: #7d35a5;
+  --gv-purple-light: #ead8f3;
+  --gv-bg: #f4f4f4;
+  --gv-white: #ffffff;
+  --gv-text: #4f4f4f;
+  --gv-text-secondary: #8a8a8a;
+  --gv-green: #45ad59;
+
+  --background: var(--gv-bg);
+  --surface: var(--gv-white);
+  --surface-muted: #f9f8fa;
+  --surface-sunken: #efedf1;
+  --foreground: var(--gv-text);
+  --foreground-strong: #2f2a33;
+  --muted-foreground: #626262;
+  --subtle-foreground: #707070; /* #8A8A8A (--gv-text-secondary) fica para ícones/decoração */
+  --border: #e6e2ea;
+  --border-strong: #d6d0dc;
+
+  --primary: var(--gv-purple);
+  --primary-hover: var(--gv-purple-dark);
+  --primary-foreground: #ffffff;
+  --primary-soft: var(--gv-purple-light);
+  --primary-soft-foreground: #6a2b8e;
+
+  --success: var(--gv-green);
+  --success-soft: #e3f4e6;
+  --success-foreground: #23703a;
+  --warning: #d98a1f;
+  --warning-soft: #fdf0dc;
+  --warning-foreground: #8a5208;
+  --danger: #d0454c;
+  --danger-soft: #fbe5e6;
+  --danger-foreground: #a3262d;
+  --info: #3b7bd1;
+  --info-soft: #e2edfb;
+  --info-foreground: #1f5aa6;
+
+  --ring: color-mix(in oklab, var(--gv-purple) 55%, transparent);
+  --chart-1: #9448bd;
+  --chart-grid: #ece8ef;
+
+  --shadow-xs: 0 1px 2px rgb(47 26 61 / 0.05);
+  --shadow-sm: 0 1px 2px rgb(47 26 61 / 0.04), 0 2px 8px rgb(47 26 61 / 0.05);
+  --shadow-md: 0 2px 6px rgb(47 26 61 / 0.05), 0 12px 32px -8px rgb(47 26 61 / 0.12);
+  --shadow-lg: 0 8px 20px rgb(47 26 61 / 0.06), 0 32px 64px -16px rgb(47 26 61 / 0.2);
+  --shadow-glow: 0 10px 30px -8px rgb(148 72 189 / 0.45);
+
+  --radius-sm: 0.5rem;
+  --radius-md: 0.75rem;
+  --radius-lg: 1rem;
+  --radius-xl: 1.25rem;
+  --radius-2xl: 1.75rem;
+
+  color-scheme: light;
+}
+
+.dark {
+  --background: #121014;
+  --surface: #1b181e;
+  --surface-muted: #211d24;
+  --surface-sunken: #0e0c10;
+  --foreground: #e6e1ea;
+  --foreground-strong: #faf7fc;
+  --muted-foreground: #aaa2b0;
+  --subtle-foreground: #8b8390;
+  --border: #2e2833;
+  --border-strong: #3d3644;
+
+  --primary: #b57ad8;
+  --primary-hover: #c792e4;
+  --primary-foreground: #1a0f21;
+  --primary-soft: #2e2138;
+  --primary-soft-foreground: #dcbcf0;
+
+  --success: #5cc270;
+  --success-soft: #16301c;
+  --success-foreground: #8bdc9b;
+  --warning: #e9a443;
+  --warning-soft: #33250f;
+  --warning-foreground: #f4c27c;
+  --danger: #ec6a70;
+  --danger-soft: #3a1719;
+  --danger-foreground: #f6a3a7;
+  --info: #6aa2ec;
+  --info-soft: #14243a;
+  --info-foreground: #a5c8f6;
+
+  --ring: color-mix(in oklab, #b57ad8 60%, transparent);
+  --chart-1: #a967cc;
+  --chart-grid: #2a252e;
+  --shadow-xs: 0 1px 2px rgb(0 0 0 / 0.4);
+  --shadow-sm: 0 1px 2px rgb(0 0 0 / 0.35), 0 2px 8px rgb(0 0 0 / 0.3);
+  --shadow-md: 0 2px 6px rgb(0 0 0 / 0.35), 0 12px 32px -8px rgb(0 0 0 / 0.55);
+  --shadow-lg: 0 8px 20px rgb(0 0 0 / 0.4), 0 32px 64px -16px rgb(0 0 0 / 0.65);
+  --shadow-glow: 0 10px 30px -8px rgb(181 122 216 / 0.35);
+
+  color-scheme: dark;
+}
+
+/* Alto contraste — preferência do usuário (Conta → Acessibilidade) */
+[data-contrast="high"] {
+  --foreground: #1d1a20;
+  --muted-foreground: #3f3a44;
+  --subtle-foreground: #4f4a54;
+  --border: #8c8293;
+  --border-strong: #5f5666;
+  --primary: #6f2a96;
+  --primary-hover: #5a1f7c;
+  --primary-soft-foreground: #4e1a6c;
+}
+.dark[data-contrast="high"] {
+  --foreground: #ffffff;
+  --muted-foreground: #e2dce7;
+  --subtle-foreground: #d0c8d6;
+  --border: #9a90a1;
+  --border-strong: #c3b8ca;
+  --primary: #d4a6f0;
+  --primary-hover: #e3c3f6;
+}
+
+/* Escala de fonte — preferência do usuário */
+html[data-font-scale="lg"] {
+  font-size: 112.5%;
+}
+html[data-font-scale="xl"] {
+  font-size: 125%;
+}
+
+@theme inline {
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
+
+  --color-background: var(--background);
+  --color-surface: var(--surface);
+  --color-surface-muted: var(--surface-muted);
+  --color-surface-sunken: var(--surface-sunken);
+  --color-foreground: var(--foreground);
+  --color-foreground-strong: var(--foreground-strong);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-subtle-foreground: var(--subtle-foreground);
+  --color-border: var(--border);
+  --color-border-strong: var(--border-strong);
+  --color-primary: var(--primary);
+  --color-primary-hover: var(--primary-hover);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary-soft: var(--primary-soft);
+  --color-primary-soft-foreground: var(--primary-soft-foreground);
+  --color-success: var(--success);
+  --color-success-soft: var(--success-soft);
+  --color-success-foreground: var(--success-foreground);
+  --color-warning: var(--warning);
+  --color-warning-soft: var(--warning-soft);
+  --color-warning-foreground: var(--warning-foreground);
+  --color-danger: var(--danger);
+  --color-danger-soft: var(--danger-soft);
+  --color-danger-foreground: var(--danger-foreground);
+  --color-info: var(--info);
+  --color-info-soft: var(--info-soft);
+  --color-info-foreground: var(--info-foreground);
+  --color-ring: var(--ring);
+
+  --color-brand-50: #f8f1fb;
+  --color-brand-100: #ead8f3;
+  --color-brand-200: #d9b6eb;
+  --color-brand-300: #c08ddb;
+  --color-brand-400: #a967cc;
+  --color-brand-500: #9448bd;
+  --color-brand-600: #7d35a5;
+  --color-brand-700: #642a85;
+  --color-brand-800: #4a1f62;
+  --color-brand-900: #2f1440;
+
+  --radius-sm: var(--radius-sm);
+  --radius-md: var(--radius-md);
+  --radius-lg: var(--radius-lg);
+  --radius-xl: var(--radius-xl);
+  --radius-2xl: var(--radius-2xl);
+
+  --shadow-xs: var(--shadow-xs);
+  --shadow-sm: var(--shadow-sm);
+  --shadow-md: var(--shadow-md);
+  --shadow-lg: var(--shadow-lg);
+  --shadow-glow: var(--shadow-glow);
+
+  /* Escala tipográfica */
+  --text-display: 3.25rem;
+  --text-display--line-height: 1.05;
+  --text-display--letter-spacing: -0.035em;
+  --text-h1: 2rem;
+  --text-h1--line-height: 1.15;
+  --text-h1--letter-spacing: -0.025em;
+  --text-h2: 1.5rem;
+  --text-h2--line-height: 1.25;
+  --text-h2--letter-spacing: -0.02em;
+  --text-h3: 1.125rem;
+  --text-h3--line-height: 1.4;
+  --text-h3--letter-spacing: -0.01em;
+  --text-metric: 2rem;
+  --text-metric--line-height: 1;
+  --text-metric--letter-spacing: -0.03em;
+  --text-caption: 0.75rem;
+  --text-caption--line-height: 1rem;
+
+  --animate-shimmer: shimmer 1.6s ease-in-out infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+@layer base {
+  * {
+    border-color: var(--border);
+  }
+  html {
+    -webkit-text-size-adjust: 100%;
+    text-rendering: optimizeLegibility;
+  }
+  body {
+    background: var(--background);
+    color: var(--foreground);
+    font-family: var(--font-sans);
+    font-feature-settings: "cv11", "ss01";
+    -webkit-font-smoothing: antialiased;
+  }
+  h1,
+  h2,
+  h3,
+  h4 {
+    color: var(--foreground-strong);
+  }
+  ::selection {
+    background: var(--primary-soft);
+    color: var(--primary-soft-foreground);
+  }
+  :focus-visible {
+    outline: 2px solid var(--primary);
+    outline-offset: 2px;
+  }
+  input::placeholder,
+  textarea::placeholder {
+    color: var(--subtle-foreground);
+  }
+}
+
+@layer utilities {
+  .tabular {
+    font-variant-numeric: tabular-nums;
+  }
+  .surface-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-sm);
+  }
+  .bg-grid {
+    background-image:
+      linear-gradient(to right, color-mix(in oklab, var(--border) 70%, transparent) 1px, transparent 1px),
+      linear-gradient(to bottom, color-mix(in oklab, var(--border) 70%, transparent) 1px, transparent 1px);
+    background-size: 44px 44px;
+  }
+  .text-gradient-brand {
+    background: linear-gradient(120deg, #7d35a5 0%, #9448bd 45%, #c08ddb 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .scrollbar-thin {
+    scrollbar-width: thin;
+    scrollbar-color: var(--border-strong) transparent;
+  }
+  .safe-bottom {
+    padding-bottom: max(0.75rem, env(safe-area-inset-bottom));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+html[data-reduce-motion="true"] *,
+html[data-reduce-motion="true"] *::before,
+html[data-reduce-motion="true"] *::after {
+  animation-duration: 0.01ms !important;
+  transition-duration: 0.01ms !important;
+}
+
+@media print {
+  body {
+    background: #fff;
+  }
+  .no-print {
+    display: none !important;
+  }
+}
+
+/* Leaflet (mapa de farmácias) */
+.leaflet-container {
+  font-family: var(--font-sans);
+  border-radius: var(--radius-xl);
+}
+
+@keyframes gv-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes gv-pop {
+  from {
+    opacity: 0;
+    scale: 0.96;
+  }
+  to {
+    opacity: 1;
+    scale: 1;
+  }
+}
+@keyframes gv-sheet {
+  from {
+    translate: 0 100%;
+  }
+  to {
+    translate: 0 0;
+  }
+}
+@keyframes gv-drawer {
+  from {
+    translate: -100% 0;
+  }
+  to {
+    translate: 0 0;
+  }
+}
+@keyframes gv-expand {
+  from {
+    height: 0;
+    opacity: 0;
+  }
+  to {
+    height: var(--radix-accordion-content-height);
+    opacity: 1;
+  }
+}
+@keyframes gv-collapse {
+  from {
+    height: var(--radix-accordion-content-height);
+  }
+  to {
+    height: 0;
+  }
+}

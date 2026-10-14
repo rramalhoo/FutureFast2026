@@ -1,0 +1,44 @@
+import "server-only";
+import { getServerSupabase } from "@/lib/supabase/server";
+import { dosesForDay, type DoseLog, type MedicationForSchedule } from "@/lib/doses";
+import { addDaysISO, todayISO, zonedDateTime } from "@/lib/format";
+
+export async function loadMedicationsWithLogs(fromISO: string, toISO: string) {
+  const supabase = await getServerSupabase();
+  const [{ data: meds }, { data: logs }] = await Promise.all([
+    supabase.from("patient_medications").select("*").order("created_at", { ascending: false }),
+    supabase
+      .from("dose_logs")
+      .select("patient_medication_id, scheduled_for, status")
+      .gte("scheduled_for", zonedDateTime(fromISO, "00:00").toISOString())
+      .lt("scheduled_for", zonedDateTime(addDaysISO(toISO, 1), "00:00").toISOString()),
+  ]);
+  return { meds: meds ?? [], logs: (logs ?? []) as DoseLog[] };
+}
+
+export async function loadTodayDoses() {
+  const today = todayISO();
+  const { meds, logs } = await loadMedicationsWithLogs(today, today);
+  return { meds, doses: dosesForDay(meds as MedicationForSchedule[], logs, today) };
+}
+
+/** Nome do médico/paciente via embed (respeita RLS de profiles). */
+export function nameOf(embed: unknown) {
+  const e = embed as { full_name?: string; profile?: { full_name?: string } } | null;
+  return e?.full_name ?? e?.profile?.full_name ?? "—";
+}
+
+/**
+ * Nomes de perfis visíveis ao usuário atual (RLS de `profiles`). Usado no lugar
+ * de joins por `patients`, que só é legível com vínculo ativo — assim
+ * solicitações pendentes e históricos continuam exibindo o nome.
+ */
+export async function profileNames(ids: (string | null | undefined)[]) {
+  const unique = [...new Set(ids.filter((v): v is string => Boolean(v)))];
+  const map = new Map<string, string>();
+  if (unique.length === 0) return map;
+  const supabase = await getServerSupabase();
+  const { data } = await supabase.from("profiles").select("id, full_name").in("id", unique);
+  for (const p of data ?? []) map.set(p.id, p.full_name);
+  return map;
+}
